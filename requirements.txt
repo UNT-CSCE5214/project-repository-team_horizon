@@ -3,3 +3,4 @@ keras
 pandas_Datareader
 streamlit
 matplotlib
+yfinance
