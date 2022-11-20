@@ -45,3 +45,11 @@ plt.plot(ma100)
 plt.plot(ma200)
 plt.plot(df.Close)
 st.pyplot(fig)
+
+
+data_training = pd.DataFrame(df['Close'][0:int(len(df)*0.70)])
+data_testing = pd.DataFrame(df['Close'][int(len(df)*0.70):int(len(df))])
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler(feature_range=(0,1))
+data_training_array = scaler.fit_transform(data_training)
+
