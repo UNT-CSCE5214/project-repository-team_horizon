@@ -53,3 +53,10 @@ from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler(feature_range=(0,1))
 data_training_array = scaler.fit_transform(data_training)
 
+past_100_days = data_training.tail(100)
+final_df = past_100_days.append(data_testing,ignore_index=True)
+input_data = scaler.fit_transform(final_df)
+
+x_test =[]
+y_test = []
+
