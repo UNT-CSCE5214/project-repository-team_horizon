@@ -3,62 +3,44 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pandas_datareader as data
 
+from sklearn.preprocessing import MinMaxScaler
 from keras.models import load_model
 
 import streamlit as st
 
-start = '2010-10-10'
-end = '2022-10-10'
+start = '2000-01-01'
+end = '2022-11-01'
 
-st.title("Build and Deploy Stock Market App Using Streamlit")
+st.title("SDAI - Academic Project - Team 13")
 
 user_input = st.text_input('Enter','AAPL')
 
 df = data.DataReader(user_input,'yahoo',start,end)
+df.rename(columns = {"Date" : "date", "Open" : "open", "High" : "high", "Low" : "low","Close" : "close", "Volume" : "volume", "Adj Close" : "adj close"}, inplace = True)
+#renaming the data frame columns to lower case
+x_test =[]
+y_test = []
 
-
-st.subheader('Data from ')
+st.subheader('Data from Website - Yahoo Finance')
 st.write(df.describe())
 
-st.subheader('CLosing Price Vs Time Chart')
-fig = plt.figure(figsize=(12,6))
-plt.plot(df.Close)
-st.pyplot(fig)
 
 
-#Adding to print Visualization for data with 100dma
-st.subheader('CLosing Price Vs Time Chart vs 100')
-ma100 = df.Close.rolling(100).mean()
-fig = plt.figure(figsize = (12,6))
-plt.plot(ma100)
-plt.plot(df.Close)
-st.pyplot(fig)
-
-#Adding to print Visualization for data with 200dma
 
 
-st.subheader('CLosing Price Vs Time Chart vs 200')
-ma100 = df.Close.rolling(100).mean()
-ma200 = df.Close.rolling(200).mean()
-fig = plt.figure(figsize = (12,6))
-plt.plot(ma100)
-plt.plot(ma200)
-plt.plot(df.Close)
-st.pyplot(fig)
-
-
-data_training = pd.DataFrame(df['Close'][0:int(len(df)*0.70)])
-data_testing = pd.DataFrame(df['Close'][int(len(df)*0.70):int(len(df))])
-from sklearn.preprocessing import MinMaxScaler
+data_training = pd.DataFrame(df['close'][0:int(len(df)*0.80)])
+data_testing = pd.DataFrame(df['close'][int(len(df)*0.80):int(len(df))])
 scaler = MinMaxScaler(feature_range=(0,1))
 data_training_array = scaler.fit_transform(data_training)
+
+#Load models
+model = load_model('2.h5')
 
 past_100_days = data_training.tail(100)
 final_df = past_100_days.append(data_testing,ignore_index=True)
 input_data = scaler.fit_transform(final_df)
 
-x_test =[]
-y_test = []
+
 
 for i in range(100,input_data.shape[0]):
     x_test.append(input_data[i-100:i])
@@ -68,7 +50,7 @@ x_test,y_test = np.array(x_test),np.array(y_test)
 
 y_predicted = model.predict(x_test)
 
-scaler= scaler.scale_
+scaler = scaler.scale_
 scale_factor = 1/scaler[0]
 y_predicted = y_predicted * scale_factor
-y_test = y_test * scale_factor
+y_test = y_test * scale_factor
