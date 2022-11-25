@@ -54,3 +54,65 @@ scaler = scaler.scale_
 scale_factor = 1/scaler[0]
 y_predicted = y_predicted * scale_factor
 y_test = y_test * scale_factor
+
+st.subheader('closing price')
+fig = plt.figure(figsize=(12,6))
+plt.plot(df.close)
+st.pyplot(fig)
+
+st.subheader('closing price with 100ma')
+ma100 = df.close.rolling(100).mean()
+fig = plt.figure(figsize = (12,6))
+plt.plot(ma100)
+plt.plot(df.close)
+st.pyplot(fig)
+
+
+
+st.subheader('closing price with 100ma and 200ma')
+ma100 = df.close.rolling(100).mean()
+ma200 = df.close.rolling(200).mean()
+fig = plt.figure(figsize = (12,6))
+plt.plot(ma100)
+plt.plot(ma200)
+plt.plot(df.close)
+st.pyplot(fig)
+
+st.subheader('Testing data and Prediction')
+fig2=plt.figure(figsize=(12,6))
+plt.plot(y_test,'b', label = 'Original')
+plt.plot(y_predicted,'r', label = 'Predicted')
+plt.xlabel('Time')
+plt.ylabel('Price')
+plt.legend()
+st.pyplot(fig2)
+
+
+predictions = model.predict(x_test)
+#predictions = scaler.inverse_transform(predictions)
+predictions = predictions * scale_factor
+
+
+
+data = df.filter(['close'])
+data
+dataset = data.values
+training_data_len = int(np.ceil( len(dataset) * .80 ))-1
+
+
+train = data[:training_data_len]
+valid = data[training_data_len:]
+valid['Predictions'] = predictions
+# Visualize the data
+
+
+
+
+st.subheader('Main Visualization')
+fig_main=plt.figure(figsize=(12,6))
+
+plt.plot(train['close'], label='A')
+plt.plot(valid[['close', 'Predictions']] ,label='B')
+plt.legend(['Train', 'Val', 'Predictions'], loc = 'lower right')
+
+st.pyplot(fig_main)
